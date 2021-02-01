@@ -103,10 +103,15 @@ const deleteBusiness = (request, response) => {
 
 };
 
+const getBusinessStaff = (request, response) => {
+
+};
+
 // API
 module.exports = {
     getAllBusinesses,
     createBusiness,
     updateBusiness,
     deleteBusiness,
+    getBusinessStaff,
 };

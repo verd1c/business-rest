@@ -19,7 +19,7 @@ app.get('/', (request, response) => {
 });
 app.get('/business', queries.getAllBusinesses);
 app.post('/business', queries.createBusiness);
-app.put('/business', queries.updateBusiness);
+app.put('/business/:id', queries.updateBusiness);
 
 app.listen(port, () => {
     console.log(`App running on port ${port}.`);

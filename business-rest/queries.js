@@ -52,10 +52,11 @@ const createBusiness = (request, response) => {
  * At least one of the arguments (name, location, type) must be passed and type has to be supported
  */
 const updateBusiness = (request, response) => {
-    const { business_id, name, location, type } = request.body;
+    const business_id = parseInt(request.params.id);
+    const { name, location, type } = request.body;
 
     // Check if id wasn't given
-    if(business_id == undefined){
+    if(business_id == undefined || isNaN(business_id)){
         response.status(400).json({
             info: 'Argument business_id missing.',
         });
@@ -86,7 +87,6 @@ const updateBusiness = (request, response) => {
     query = query.slice(0, -1); // Cut off last comma
     query += " WHERE business_id = " + business_id + ";";
 
-    console.log(query);
     pool.query(query, (error, results) => {
         if(error){
             console.log('AAaaa');
@@ -96,9 +96,17 @@ const updateBusiness = (request, response) => {
     });
 };
 
+/**
+ * 
+ */
+const deleteBusiness = (request, response) => {
+
+};
+
 // API
 module.exports = {
     getAllBusinesses,
     createBusiness,
     updateBusiness,
+    deleteBusiness,
 };

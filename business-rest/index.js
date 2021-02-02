@@ -36,7 +36,7 @@ app.post('/business/:id/staff', queries.createStaff);
 //app.put('/business/:id/staff/:staff_id');
 app.put('/staff/:staff_id', queries.updateStaff);
 //app.delete('business/:id/staff/:staff_id');
-app.delete('staff/:staff_id', queries.deleteStaff);
+app.delete('/staff/:staff_id', queries.deleteStaff);
 
 // Server listener
 app.listen(port, () => {

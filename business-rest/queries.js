@@ -144,7 +144,7 @@ const deleteBusiness = (request, response) => {
 };
 
 /**
- * Fetches all staff members for given business
+ * Fetches all staff members for given business ID
  */
 const getBusinessStaff = (request, response) => {
     const business_id = parseInt(request.params.id);
@@ -160,7 +160,7 @@ const getBusinessStaff = (request, response) => {
 };
 
 /**
- * Fetches a staff memeber given the staff id
+ * Fetches a staff memeber given the staff ID
  */
 const getStaffMember = (request, response) => {
     const staff_id = parseInt(request.params.staff_id);
@@ -185,7 +185,7 @@ const getStaffMember = (request, response) => {
 };
 
 /**
- * Create staff member for given business
+ * Create staff member for given business ID
  */
 const createStaff = (request, response) => {
     const business_id = parseInt(request.params.id);
@@ -238,6 +238,88 @@ const createStaff = (request, response) => {
     });
 };
 
+/**
+ * Updates given ID staff member's information
+ * 
+ * Only the parameters actually passed will be changed
+ * Position has to be supported
+ */
+const updateStaff = (request, response) => {
+    const staff_id = parseInt(request.params.staff_id);
+    const { email, first_name, last_name, position, phone_number } = request.body;
+
+    // Check if id wasn't given
+    if(staff_id == undefined || isNaN(staff_id)){
+        response.status(400).json({
+            info: 'Argument staff_id missing.',
+        });
+        return;
+    }
+
+    // Check if nothing was parsed to update
+    if(!email && !first_name && !last_name && !position && !phone_number){
+        response.status(400).json({
+            info: 'Nothing was parsed to update.',
+        });
+        return;
+    }
+
+    // Check if a position change request was given but the position is wrong
+    if(position != undefined && !staffTypes.includes(position.toLowerCase())){
+        response.status(400).json({
+            info: 'Staff position ' + position + ' is not supported.',
+        });
+        return;
+    }
+
+    // Build query
+    var query = "UPDATE staff SET";
+    if(email != undefined) query += " email = '" + email.toLowerCase() + "',";
+    if(first_name != undefined) query += " first_name = '" + first_name + "',";
+    if(last_name != undefined) query += " last_name = '" + last_name + "',";
+    if(position != undefined) query += " position = '" + position.toLowerCase() + "',";
+    if(phone_number != undefined) query += " phone_number = '" + phone_number + "',";
+    query = query.slice(0, -1); // Cut off last comma
+    query += " WHERE staff_id = " + staff_id + ";";
+
+    pool.query(query, (error, results) => {
+        if(error){
+            response.status(500).send(`Internal Server Error`);
+            return;
+        }
+        
+        response.status(200).send(`Staff with ID: ${staff_id} modified successfully`);
+    });
+};
+
+/**
+ * Delete the staff member with given ID
+ */
+const deleteStaff = (request, response) => {
+    const staff_id = parseInt(request.params.staff_id);
+
+    // Check if id wasn't given
+    if(staff_id == undefined || isNaN(staff_id)){
+        response.status(400).send('Argument staff_id missing');
+        return;
+    }
+
+    // Delete business
+    pool.query('DELETE FROM staff WHERE staff_id = $1;', [staff_id], (error, results) => {
+        if(error){
+            response.status(500).send(`Internal Server Error`);
+            return;
+        }
+
+        response.status(200).send(`Staff member with ID: ${staff_id} deleted successfully`);
+    });
+};
+
+/**
+ * Checkes wether a string matches the email format (user@domain.tld)
+ * 
+ * @param email string to be checked
+ */
 function isEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
@@ -256,4 +338,6 @@ module.exports = {
     getBusinessStaff,
     getStaffMember,
     createStaff,
+    updateStaff,
+    deleteStaff,
 };

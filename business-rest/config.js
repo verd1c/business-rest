@@ -1,3 +1,4 @@
+// Connection config for external dbs
 const connection = {
     user: 'me',
     host: 'localhost',
@@ -6,6 +7,7 @@ const connection = {
     port: 5432,
 }
 
+// Possible business types
 const businessTypes = [
     "bar", 
     "restaurant", 
@@ -14,6 +16,7 @@ const businessTypes = [
     "cafe"
 ]
 
+// Possible staff types
 const staffTypes = [
     "kitchen",
     "service",

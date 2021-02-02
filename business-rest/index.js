@@ -12,11 +12,14 @@ app.use(
     })
 );
 
+// Base
 app.get('/', (request, response) => {
     response.json({
         info: 'A Rest API implementation for bussinesses'
     });
 });
+
+// ~ Endpoints
 
 // Business
 app.get('/business', queries.getAllBusinesses);
@@ -29,15 +32,13 @@ app.delete('/business/:id', queries.deleteBusiness);
 app.get('/business/:id/staff', queries.getBusinessStaff); // Get all staff by business ID
 //app.get('/business/:id/staff/:staff_id', queries.getStaffMember);
 app.get('/staff/:staff_id', queries.getStaffMember);
-
 app.post('/business/:id/staff', queries.createStaff);
-
 //app.put('/business/:id/staff/:staff_id');
-app.put('/staff/:staff_id');
-
+app.put('/staff/:staff_id', queries.updateStaff);
 //app.delete('business/:id/staff/:staff_id');
-app.delete('staff/:staff_id');
+app.delete('staff/:staff_id', queries.deleteStaff);
 
+// Server listener
 app.listen(port, () => {
     console.log(`REST API running on port ${port} using ${queries.connection.database}:${queries.connection.user}:${queries.connection.password}@${queries.connection.host}:${queries.connection.port}`);
 });
